@@ -14,16 +14,20 @@ resource "azurerm_network_interface" "vm01-nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm01" {
-  name                = "vm01"
-  resource_group_name = azurerm_resource_group.rg-infra-02-vm.name
-  location            = azurerm_resource_group.rg-infra-02-vm.location
-  size                = "Standard_F1as_v7"
+  name                            = "vm01"
+  resource_group_name             = azurerm_resource_group.rg-infra-02-vm.name
+  location                        = azurerm_resource_group.rg-infra-02-vm.location
+  size                            = "Standard_F1as_v7"
   disable_password_authentication = false
 
   admin_username = "adminuser"
   admin_password = "P@ssword1234!"
 
-  custom_data = base64encode(file("${path.module}/cloud_init.yaml"))
+  custom_data = base64encode(
+    templatefile("${path.module}/cloud_init.tftpl", {
+      python_script = file("${path.module}/../scripts/upload_logs.py")
+    })
+  )
 
   network_interface_ids = [
     azurerm_network_interface.vm01-nic.id,

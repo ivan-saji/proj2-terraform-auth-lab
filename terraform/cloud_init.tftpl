@@ -1,0 +1,29 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - python3
+  - python3-pip
+  - curl
+  - unzip
+  - jq
+
+write_files:
+  - path: /opt/log-uploader/upload_logs.py
+    permissions: "0755"
+    owner: root:root
+    content: |
+      ${replace(python_script, "\n", "\n      ")}
+
+runcmd:
+  - mkdir -p /opt/log-uploader
+
+  - pip3 install azure-storage-blob azure-identity python-dotenv
+
+  - chmod +x /opt/log-uploader/upload_logs.py
+
+  - python3 /opt/log-uploader/upload_logs.py > /opt/log-uploader/output.log
+
+  - echo "Bootstrap completed successfully!" > /opt/log-uploader/bootstrap-complete.txt
