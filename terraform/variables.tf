@@ -2,7 +2,7 @@
 variable "tenant_id" {
   description = "The Azure AD tenant ID"
   type        = string
-  default     = "<YOUR_TENANT_ID>"
+  default     = "8316e695-7e94-4716-92c4-836cee1dc7ce"
 }
 
 

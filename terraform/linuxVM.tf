@@ -17,10 +17,13 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   name                = "vm01"
   resource_group_name = azurerm_resource_group.rg-infra-02-vm.name
   location            = azurerm_resource_group.rg-infra-02-vm.location
-  size                = "Standard_D4_v5"
-  
-  admin_username      = "adminuser"
-  admin_password      = "P@ssword1234!"
+  size                = "Standard_F1as_v7"
+  disable_password_authentication = false
+
+  admin_username = "adminuser"
+  admin_password = "P@ssword1234!"
+
+  custom_data = base64encode(file("${path.module}/cloud_init.yaml"))
 
   network_interface_ids = [
     azurerm_network_interface.vm01-nic.id,
@@ -35,7 +38,7 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }
