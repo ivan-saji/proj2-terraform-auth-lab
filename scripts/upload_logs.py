@@ -16,10 +16,21 @@ def create_dummy_log():
     print("Dummy log created successfully.")
 
 
+def authenticate():
+
+    print("Reading credentials...\n")
+
+    print(f"Client ID     : {config.CLIENT_ID}")
+    print(f"Tenant ID     : {config.TENANT_ID}")
+    print(f"Client Secret : {config.CLIENT_SECRET}")
+
+    print("\nAuthentication will be implemented next.")
+
 def main():
 
     create_dummy_log()
-
+    authenticate()
+    
 
 if __name__ == "__main__":
     main()
