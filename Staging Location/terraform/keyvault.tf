@@ -3,7 +3,7 @@
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "tf_keyvault" {
-  name                        = "tf-keyvault"
+  name                        = "tf-keyvault-ivan-authlab"
   location                    = azurerm_resource_group.rg_infra_02_vm.location
   resource_group_name         = azurerm_resource_group.rg_infra_02_vm.name
 
