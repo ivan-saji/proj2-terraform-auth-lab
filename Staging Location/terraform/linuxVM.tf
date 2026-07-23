@@ -1,13 +1,13 @@
 # Create the Linux VM here
 
-resource "azurerm_network_interface" "vm01-nic" {
+resource "azurerm_network_interface" "vm01_nic" {
   name                = "vm01-nic"
-  location            = azurerm_resource_group.rg-infra-02-vm.location
-  resource_group_name = azurerm_resource_group.rg-infra-02-vm.name
+  location            = azurerm_resource_group.rg_infra_02_vm.location
+  resource_group_name = azurerm_resource_group.rg_infra_02_vm.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.rg02-subnet.id
+    subnet_id                     = azurerm_subnet.rg02_subnet.id
     private_ip_address_allocation = "Static"
     private_ip_address            = "10.0.2.10"
   }
@@ -15,8 +15,8 @@ resource "azurerm_network_interface" "vm01-nic" {
 
 resource "azurerm_linux_virtual_machine" "vm01" {
   name                            = "vm01"
-  resource_group_name             = azurerm_resource_group.rg-infra-02-vm.name
-  location                        = azurerm_resource_group.rg-infra-02-vm.location
+  resource_group_name             = azurerm_resource_group.rg_infra_02_vm.name
+  location                        = azurerm_resource_group.rg_infra_02_vm.location
   size                            = "Standard_F1as_v7"
   disable_password_authentication = false
 
@@ -30,7 +30,7 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   )
 
   network_interface_ids = [
-    azurerm_network_interface.vm01-nic.id,
+    azurerm_network_interface.vm01_nic.id,
   ]
 
   os_disk {
