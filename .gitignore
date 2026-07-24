@@ -46,3 +46,7 @@ terraform.rc
 scripts/secret
 scripts/.env
 scripts/.env
+
+terraform.tfvars
+*.tfstate
+*.tfstate.*

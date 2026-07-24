@@ -24,10 +24,17 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   admin_password = "P@ssword1234!"
 
   custom_data = base64encode(
-    templatefile("${path.module}/cloud_init.tftpl", {
-      python_script = file("${path.module}/../scripts/upload_logs.py")
-    })
-  )
+  templatefile("${path.module}/cloud_init.tftpl", {
+    python_script     = file("${path.module}/../scripts/upload_logs.py")
+    config_file       = file("${path.module}/../scripts/config.py")
+    requirements_file = file("${path.module}/../scripts/requirements.txt")
+    
+    client_id     = var.sp_client_id
+    tenant_id     = var.sp_tenant_id
+    client_secret = var.sp_client_secret
+    
+  })
+)
 
   network_interface_ids = [
     azurerm_network_interface.vm01_nic.id,
