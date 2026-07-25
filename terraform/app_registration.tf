@@ -7,7 +7,7 @@ resource "azuread_application" "app_storage_uploader" {
 # Service Principals
 
 resource "azuread_service_principal" "sp_storage_uploader" {
-    client_id = azuread_application.app_storage_uploader.id
+    client_id = azuread_application.app_storage_uploader.client_id
 }
 
 # Client Secret
