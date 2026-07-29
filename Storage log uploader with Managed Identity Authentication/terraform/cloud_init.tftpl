@@ -1,0 +1,95 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - python3
+  - python3-pip
+
+# File Upload Section
+
+#Upload the Python script to the instance
+write_files:
+  - path: /opt/log-uploader/upload_logs.py
+    permissions: "0755"
+    owner: root:root
+    content: |
+      ${replace(python_script, "\n", "\n      ")}
+
+#Upload the configuration file to the instance
+  - path: /opt/log-uploader/config.py
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${replace(config_file, "\n", "\n      ")}
+
+#Upload the requirements file to the instance
+  - path: /opt/log-uploader/requirements.txt
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${replace(requirements_file, "\n", "\n      ")}
+
+#Setup the environment variables
+  - path: /etc/environment
+    permissions: "0644"
+    owner: root:root
+    content: |
+      AZURE_CLIENT_ID=${client_id}
+      AZURE_TENANT_ID=${tenant_id}
+      AZURE_CLIENT_SECRET=${client_secret}
+
+#SystemD service to run the Python script
+
+# systemd Service
+  - path: /etc/systemd/system/log-uploader.service
+    permissions: "0644"
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Azure Log Uploader
+      After=network-online.target
+
+      [Service]
+      Type=oneshot
+      WorkingDirectory=/opt/log-uploader
+      EnvironmentFile=/etc/environment
+      ExecStart=/usr/bin/python3 /opt/log-uploader/upload_logs.py
+      User=root
+
+      [Install]
+      WantedBy=multi-user.target
+
+
+# systemd Timer
+  - path: /etc/systemd/system/log-uploader.timer
+    permissions: "0644"
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Run Log Uploader every 5 minutes
+
+      [Timer]
+      OnBootSec=1min
+      OnUnitActiveSec=5min
+      Unit=log-uploader.service
+
+      [Install]
+      WantedBy=timers.target
+
+runcmd:
+  - mkdir -p /opt/log-uploader
+  - mkdir -p /opt/log-uploader/logs
+
+  - python3 -m pip install --upgrade pip
+
+  - pip3 install -r /opt/log-uploader/requirements.txt
+
+  - systemctl daemon-reload
+
+  - systemctl enable log-uploader.timer
+
+  - systemctl start log-uploader.timer
+
+  - echo "Cloud-init completed successfully." > /opt/log-uploader/bootstrap-complete.txt
