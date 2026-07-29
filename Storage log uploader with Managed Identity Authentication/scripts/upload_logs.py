@@ -1,12 +1,10 @@
 from datetime import datetime
 import os
 
-from azure.identity import ClientSecretCredential
-from azure.keyvault.secrets import SecretClient
+from azure.identity import ManagedIdentityCredential
 from azure.storage.blob import BlobServiceClient
 
 import config
-
 
 def create_dummy_log():
     """
@@ -20,62 +18,17 @@ def create_dummy_log():
     print("✅ Dummy log created successfully.")
 
 
-def authenticate():
-    """
-    Authenticate using Azure Service Principal.
-    """
-
-    print("\n===================================")
-    print("Authenticating with Azure...")
-    print("===================================\n")
-
-    credential = ClientSecretCredential(
-        tenant_id=config.TENANT_ID,
-        client_id=config.CLIENT_ID,
-        client_secret=config.CLIENT_SECRET
-    )
-
-    # Force authentication by requesting a token
-    credential.get_token("https://vault.azure.net/.default")
-
-    print("✅ Authentication successful.\n")
-
-    return credential
-
-
-def read_secret(credential):
-    """
-    Read Storage Account connection string from Key Vault.
-    """
-
-    print("Reading secret from Key Vault...")
-
-    vault_url = f"https://{config.KEYVAULT_NAME}.vault.azure.net"
-
-    secret_client = SecretClient(
-        vault_url=vault_url,
-        credential=credential
-    )
-
-    connection_string = secret_client.get_secret(
-        config.SECRET_NAME
-    ).value
-
-    print("✅ Secret retrieved successfully.\n")
-
-    return connection_string
-
-
-def upload_log(connection_string):
+def upload_log(credential):
     """
     Upload dummy.log to Azure Blob Storage.
     """
 
     print("Uploading log to Azure Storage...")
 
-    blob_service_client = BlobServiceClient.from_connection_string(
-        connection_string
-    )
+    blob_service_client = BlobServiceClient(
+    account_url=f"https://{config.STORAGE_ACCOUNT_NAME}.blob.core.windows.net",
+    credential=credential
+)
 
     blob_client = blob_service_client.get_blob_client(
         container=config.STORAGE_CONTAINER,
@@ -96,12 +49,13 @@ def main():
 
     create_dummy_log()
 
-    credential = authenticate()
+    credential = ManagedIdentityCredential()
+    print("✅ Managed Identity authenticated.")
 
-    connection_string = read_secret(credential)
+    #Verify the token acquisition
+    credential.get_token("https://storage.azure.com/.default")
 
-    upload_log(connection_string)
-
+    upload_log(credential)
     print("==============================")
     print("Project completed successfully!")
     print("==============================")

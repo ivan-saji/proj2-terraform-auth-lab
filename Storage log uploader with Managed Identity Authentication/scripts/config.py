@@ -22,31 +22,13 @@ LOG_FILE = os.path.join(LOG_DIRECTORY, LOG_FILENAME)
 
 
 # ============================================================
-# Azure Service Principal Configuration
-# (Read from Environment Variables)
-# ============================================================
-
-CLIENT_ID = os.getenv("AZURE_CLIENT_ID")
-TENANT_ID = os.getenv("AZURE_TENANT_ID")
-CLIENT_SECRET = os.getenv("AZURE_CLIENT_SECRET")
-
-
-# ============================================================
-# Azure Key Vault Configuration
-# ============================================================
-
-KEYVAULT_NAME = "tf-keyvault-ivan-authlab"
-
-# Secret stored inside Key Vault
-SECRET_NAME = "storage-connection-string"
-
-
-# ============================================================
 # Azure Storage Configuration
 # ============================================================
 
 # Container where logs will be uploaded
 STORAGE_CONTAINER = "logs"
+
+STORAGE_ACCOUNT_NAME = "st01logs"
 
 # Blob name inside the container
 BLOB_NAME = LOG_FILENAME

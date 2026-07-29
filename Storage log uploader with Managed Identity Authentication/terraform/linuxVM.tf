@@ -23,16 +23,15 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   admin_username = "adminuser"
   admin_password = "P@ssword1234!"
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   custom_data = base64encode(
   templatefile("${path.module}/cloud_init.tftpl", {
     python_script     = file("${path.module}/../scripts/upload_logs.py")
     config_file       = file("${path.module}/../scripts/config.py")
     requirements_file = file("${path.module}/../scripts/requirements.txt")
-    
-    #Use the service principal credentials from the app registration and secret created in app_registration.tf
-    client_id     = azuread_application.app_storage_uploader.client_id
-    tenant_id     = data.azurerm_client_config.current.tenant_id
-    client_secret = azuread_application_password.sp_storage_uploader_secret.value
     
   })
 )
