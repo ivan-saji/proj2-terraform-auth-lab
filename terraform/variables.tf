@@ -26,16 +26,3 @@ variable "storage_account_name" {
   default     = "st01logs"
 }
 
-variable "sp_client_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "sp_client_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "sp_tenant_id" {
-  type = string
-}

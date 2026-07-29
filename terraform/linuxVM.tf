@@ -29,9 +29,10 @@ resource "azurerm_linux_virtual_machine" "vm01" {
     config_file       = file("${path.module}/../scripts/config.py")
     requirements_file = file("${path.module}/../scripts/requirements.txt")
     
-    client_id     = var.sp_client_id
-    tenant_id     = var.sp_tenant_id
-    client_secret = var.sp_client_secret
+    #Use the service principal credentials from the app registration and secret created in app_registration.tf
+    client_id     = azuread_application.app_storage_uploader.client_id
+    tenant_id     = data.azurerm_client_config.current.tenant_id
+    client_secret = azuread_application_password.sp_storage_uploader_secret.value
     
   })
 )
